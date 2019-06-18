@@ -63,24 +63,38 @@ exports.handler = function (event, context)
         ]
     };
 
+    // return param
+    var ret;
+    var msg;
+    
     postMessage(slackMessage, function (response)
     {
         if (response.statusCode < 400)
         {
-            console.info('Message posted successfully:');
-            console.log('Message posted successfully:');
-            context.succeed();
+            msg = 'Message posted successfully:' + response.statusCode + "(" + response.statusMessage + ")"
+            console.info(msg);
+            console.log(msg);
+            context.succeed(msg);
         } else if (response.statusCode < 500)
         {
-            console.error("Error posting message to Slack API: " + response.statusCode + " - " + response.statusMessage);
-            console.log("Error posting message to Slack API: " + response.statusCode + " - " + response.statusMessage);
-            context.succeed();
+            msg = "Error posting message to Slack API: " + response.statusCode + "(" + response.statusMessage + ")"
+            console.error(msg);
+            console.log(msg);
+            context.fail(msg);
         } else
         {
-            // Let Lambda retry
-            context.fail("Server error when processing message: " + response.statusCode + " - " + response.statusMessage);
+            msg = "Server error when processing message: " + response.statusCode + "(" + response.statusMessage + ")"
+            console.error(msg);
+            console.log(msg);
+            context.fail(msg);
         }
     });
+
+    ret = {
+        body: JSON.stringify(msg),
+    };
+
+    return ret;
 };
 
 var postMessage = function (message, callback)
@@ -119,4 +133,3 @@ var postMessage = function (message, callback)
     postReq.write(body);
     postReq.end();
 };
-
