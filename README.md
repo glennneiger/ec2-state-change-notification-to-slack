@@ -19,6 +19,7 @@ Amazon EC2 state change notification to Slack.
 - This code using slack custom emoji ":aws:" and ":ec2:". Those icon pictures are using AWS Architecture Simple Icon.
 
 - Environment variable
+
     | key | value |
     |:-----------|:------------|
     | hookUrl | Slack webhook url |
@@ -29,6 +30,7 @@ Amazon EC2 state change notification to Slack.
 1. Enable AWS CloudTrail.
 
 2. Create Amazon CloudWatch event rule.
+
     | Event pattern |  |
     |:-----------|:------------|
     | Service Name | EC2 |
@@ -42,7 +44,9 @@ Amazon EC2 state change notification to Slack.
 3. Create Lambda function with this code.
 
 ## Licence
+
 [MIT](https://github.com/mamori017/ec2-state-change-notification-to-slack/blob/master/LICENSE)
 
 ## Author
+
 [mamori017](https://github.com/mamori017)
