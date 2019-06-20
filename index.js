@@ -1,11 +1,11 @@
-var aws = require('aws-sdk');
-var url = require('url');
-var https = require('https');
+var aws = require("aws-sdk");
+var url = require("url");
+var https = require("https");
 
 exports.handler = function (event, context)
 {
-    console.info('start');
-    console.log('event', JSON.stringify(event, null, 2));
+    console.info("start");
+    console.log("event", JSON.stringify(event, null, 2));
 
     // default status
     var icon = ":ec2:"
@@ -15,15 +15,15 @@ exports.handler = function (event, context)
     // set state color
     switch (event.detail["state"])
     {
-        case 'running':
+        case "running":
             statusColor = "good";
             break
-        case 'stopped':
+        case "stopped":
             statusColor = "danger";
             break
-        case 'pending':
-        case 'stopping':
-        case 'terminated':
+        case "pending":
+        case "stopping":
+        case "terminated":
             statusColor = "warning";
             break
         default:
@@ -71,19 +71,19 @@ exports.handler = function (event, context)
     {
         if (response.statusCode < 400)
         {
-            msg = 'Message posted successfully:' + response.statusCode + "(" + response.statusMessage + ")"
+            msg = "Message posted successfully:" + response.statusCode + "(" + response.statusMessage + ")";
             console.info(msg);
             console.log(msg);
             context.succeed(msg);
         } else if (response.statusCode < 500)
         {
-            msg = "Error posting message to Slack API: " + response.statusCode + "(" + response.statusMessage + ")"
+            msg = "Error posting message to Slack API: " + response.statusCode + "(" + response.statusMessage + ")";
             console.error(msg);
             console.log(msg);
             context.fail(msg);
         } else
         {
-            msg = "Server error when processing message: " + response.statusCode + "(" + response.statusMessage + ")"
+            msg = "Server error when processing message: " + response.statusCode + "(" + response.statusMessage + ")";
             console.error(msg);
             console.log(msg);
             context.fail(msg);
@@ -102,23 +102,23 @@ var postMessage = function (message, callback)
     var body = JSON.stringify(message);
     var options = url.parse(process.env["hookUrl"]);
 
-    options.method = 'POST';
+    options.method = "POST";
     options.headers = {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body),
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body),
     };
 
     var postReq = https.request(options, function (res)
     {
         var chunks = [];
-        res.setEncoding('utf8');
-        res.on('data', function (chunk)
+        res.setEncoding("utf8");
+        res.on("data", function (chunk)
         {
             return chunks.push(chunk);
         });
-        res.on('end', function ()
+        res.on("end", function ()
         {
-            var body = chunks.join('');
+            var body = chunks.join("");
             if (callback)
             {
                 callback({
