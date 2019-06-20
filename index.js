@@ -1,14 +1,51 @@
 var url = require("url");
 var https = require("https");
 
+var postMessage = function (message, callback)
+{
+    var body = JSON.stringify(message);
+    var options = url.parse(process.env["hookUrl"]);
+
+    options.method = "POST";
+    options.headers = {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body),
+    };
+
+    var postReq = https.request(options, function (res)
+    {
+        var chunks = [];
+        res.setEncoding("utf8");
+        res.on("data", function (chunk)
+        {
+            return chunks.push(chunk);
+        });
+        res.on("end", function ()
+        {
+            var body = chunks.join("");
+            if (callback)
+            {
+                callback({
+                    body: body,
+                    statusCode: res.statusCode,
+                    statusMessage: res.statusMessage
+                });
+            }
+        });
+        return res;
+    });
+    postReq.write(body);
+    postReq.end();
+};
+
 exports.handler = function (event, context)
 {
     console.info("start");
     console.log("event", JSON.stringify(event, null, 2));
 
     // default status
-    var icon = ":ec2:"
-    var serviceName = "EC2"
+    var icon = ":ec2:";
+    var serviceName = "EC2";
     var statusColor = "good";
 
     // set state color
@@ -16,17 +53,17 @@ exports.handler = function (event, context)
     {
         case "running":
             statusColor = "good";
-            break
+            break;
         case "stopped":
             statusColor = "danger";
-            break
+            break;
         case "pending":
         case "stopping":
         case "terminated":
             statusColor = "warning";
-            break
+            break;
         default:
-            break
+            break;
     }
 
     //set post message
@@ -96,39 +133,3 @@ exports.handler = function (event, context)
     return ret;
 };
 
-var postMessage = function (message, callback)
-{
-    var body = JSON.stringify(message);
-    var options = url.parse(process.env["hookUrl"]);
-
-    options.method = "POST";
-    options.headers = {
-        "Content-Type": "application/json",
-        "Content-Length": Buffer.byteLength(body),
-    };
-
-    var postReq = https.request(options, function (res)
-    {
-        var chunks = [];
-        res.setEncoding("utf8");
-        res.on("data", function (chunk)
-        {
-            return chunks.push(chunk);
-        });
-        res.on("end", function ()
-        {
-            var body = chunks.join("");
-            if (callback)
-            {
-                callback({
-                    body: body,
-                    statusCode: res.statusCode,
-                    statusMessage: res.statusMessage
-                });
-            }
-        });
-        return res;
-    });
-    postReq.write(body);
-    postReq.end();
-};
