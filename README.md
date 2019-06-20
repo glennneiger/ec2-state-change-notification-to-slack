@@ -14,7 +14,15 @@ Amazon EC2 state change notification to Slack.
 
 ## Requirement
 
-Runtime : Node.js 10.x
+- Runtime : Node.js 10.x
+
+- This code using slack custom emoji ":aws:" and ":ec2:". Those icon pictures are using AWS Architecture Simple Icon.
+
+- Environment variable
+    | key | value |
+    |:-----------|:------------|
+    | hookUrl | Slack webhook url |
+    | slackChannel | target slack channel  |
 
 ## Usage
 
