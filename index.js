@@ -1,4 +1,3 @@
-var aws = require("aws-sdk");
 var url = require("url");
 var https = require("https");
 
